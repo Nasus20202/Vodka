@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 class ListUser:
     discord_user: discord.User
     attending: bool = None
-    enlisted: bool = False
+    enlisted: bool = None
     enlister: discord.User = None
     enlist_time: datetime = None
     sleeping_until: datetime = None
@@ -17,7 +17,7 @@ class ListUser:
 
     def reset(self) -> None:
         self.attending = None
-        self.enlisted = False
+        self.enlisted = None
         self.enlister = None
         self.enlist_time = None
 

@@ -13,6 +13,7 @@ list_manager = ListManager()
 async def on_ready():
     print(f"Logged in as {client.user}")
     await command_tree.sync()
+    await client.change_presence(activity=discord.CustomActivity(name="/pomoc"))
 
 @command_tree.command(name="pomoc", description="Wyświetla pomoc")
 async def attending(interaction: discord.Interaction):

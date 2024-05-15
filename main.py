@@ -80,10 +80,10 @@ async def sleep(interaction: discord.Interaction, time: int = 8):
     )
 
 
-@command_tree.command(name="lista", description="Lista osób do wpiania")
+@command_tree.command(name="lista", description="Lista osób do wpisania")
 async def print_list(interaction: discord.Interaction):
     embed = discord.Embed(
-        title="Lista osób do wpiania",
+        title="Lista osób do wpisania",
         description="Osoby na tej liście zadeklarowały, że nie będzie ich na wykładzie",
         color=0x00FF00,
     )

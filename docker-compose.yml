@@ -1,6 +1,8 @@
 services:
-  listownik:
+  vodka:
     build: .
-    restart: unless-stopped
+    restart: always
     environment:
       - TOKEN=$TOKEN
+    volumes:
+      - ./data:/app/data

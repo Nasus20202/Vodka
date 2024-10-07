@@ -1,12 +1,13 @@
 import discord
 from config import *
 from list_manager import ListManager
-from datetime import datetime, timedelta
+from datetime import timedelta
+import persistence
 
 intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 command_tree = discord.app_commands.CommandTree(client=client)
-list_manager = ListManager()
+list_manager = persistence.load_user_metadata(ListManager())
 
 
 @client.event
@@ -14,6 +15,7 @@ async def on_ready():
     print(f"Logged in as {client.user}")
     await command_tree.sync()
     await client.change_presence(activity=discord.CustomActivity(name="/pomoc"))
+
 
 @command_tree.command(name="pomoc", description="Wyświetla pomoc")
 async def attending(interaction: discord.Interaction):
@@ -34,17 +36,22 @@ async def metadane(interaction: discord.Interaction, name: str, index_number: in
     list_manager.set_user_metadata(interaction.user, name, index_number)
     await interaction.response.send_message("Ustawiono metadane", ephemeral=True)
 
+    persistence.backup_user_metadata(list_manager)
+
+
 @command_tree.command(name="wpiszcie", description="Prośba o wpisanie na liste")
 async def not_attending(interaction: discord.Interaction):
     list_manager.set_user_attending(interaction.user, False)
     list_user = list_manager.users[interaction.user.id]
-    await interaction.response.send_message(f"{list_user} ({list_user.index_number if list_user.index_number else 'N/A'}) prosi o wpisanie na listę")
+    await interaction.response.send_message(f"{list_user} ({list_user.metadata.index_number if list_user.metadata.index_number else 'N/A'}) prosi o wpisanie na listę")
+
 
 @command_tree.command(name="wpisze", description="Zapisuje inną osobę na wykład")
 async def enlist(interaction: discord.Interaction, user: discord.User):
     list_manager.enlist_user(user, interaction.user)
     list_user = list_manager.users[user.id]
-    await interaction.response.send_message(f"{interaction.user.name} zapisze {list_user} ({list_user.index_number if list_user.index_number else "N/A"}) na listę")
+    await interaction.response.send_message(f"{interaction.user.name} zapisze {list_user} ({list_user.metadata.index_number if list_user.metadata.index_number else "N/A"}) na listę")
+
 
 @command_tree.command(name="zapisani", description="Lista osób zapisanych na wykład")
 async def print_enlisted(interaction: discord.Interaction):
@@ -56,10 +63,13 @@ async def print_enlisted(interaction: discord.Interaction):
     embed.set_author(name=interaction.user.name, icon_url=interaction.user.avatar.url)
     for user in list_manager.get_enlisted():
         user_enlister = list_manager.users[user.enlister.id]
-        embed.add_field(name=f"{user} ({user.index_number if user.index_number else 'N/A'})", value=f"wpisany przez {user_enlister} ({user_enlister.index_number if user_enlister.index_number else 'N/A'})", inline=False)
+        embed.add_field(name=f"{user} ({user.metadata.index_number if user.metadata.index_number else 'N/A'})",
+                        value=f"wpisany przez {user_enlister} ({user_enlister.metadata.index_number if user_enlister.metadata.index_number else 'N/A'})", 
+                        inline=False)
     embed.set_footer(text="Miłego wykładu!")
 
     await interaction.response.send_message("Lista", embed=embed)
+
 
 @command_tree.command(name="drzemka", description="Zapisuje się na drzemkę")
 async def sleep(interaction: discord.Interaction, time: int = 8):
@@ -89,10 +99,11 @@ async def print_list(interaction: discord.Interaction):
     )
     embed.set_author(name=interaction.user.name, icon_url=interaction.user.avatar.url)
     for user in list_manager.get_not_attending():
-        embed.add_field(name=str(user), value=str(user.index_number if user.index_number else "N/A"), inline=False)
+        embed.add_field(name=str(user), value=str(user.metadata.index_number if user.metadata.index_number else "N/A"), inline=False)
     embed.set_footer(text="Miłego wykładu!")
 
     await interaction.response.send_message("Lista", embed=embed)
+
 
 @command_tree.command(name="reset", description="Resetuje listę")
 async def reset_list(interaction: discord.Interaction):

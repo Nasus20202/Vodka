@@ -72,6 +72,9 @@ class ListManager:
         self.ensure_list_user(user)
         self.users[user.id].metadata = ListUserMetadata(name, index_number)
 
+    def get_all_users(self) -> list[ListUser]:
+        return [self.users[user] for user in self.users]
+
     def get_not_enlisted(self) -> list[ListUser]:
         return [user for user in self.users if not self.users[user].enlisted]
 

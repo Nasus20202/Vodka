@@ -48,7 +48,8 @@ async def indeksy(interaction: discord.Interaction):
         color=0x0000FF,
     )
     embed.set_author(name=interaction.user.name, icon_url=interaction.user.avatar.url)
-    for user in list_manager.get_all_users():
+
+    for user in sorted(list_manager.get_all_users(), key=lambda x: str(x)):
         embed.add_field(
             name=str(user),
             value=str(

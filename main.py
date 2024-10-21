@@ -84,7 +84,7 @@ async def enlist(interaction: discord.Interaction, user: discord.User):
 async def print_enlisted(interaction: discord.Interaction):
     embed = discord.Embed(
         title="Lista osób wpisanych",
-        description="Osoby na tej liście zadeklarowały, że będą na wykładzie",
+        description="Osoby na tej liście zostały wpisane na listę",
         color=0xFF0000,
     )
     embed.set_author(name=interaction.user.name, icon_url=interaction.user.avatar.url)

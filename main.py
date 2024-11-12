@@ -1,3 +1,4 @@
+import random
 import discord
 from config import *
 from list_manager import ListManager
@@ -30,6 +31,26 @@ async def attending(interaction: discord.Interaction):
     `/metadane` - ustawia imie i indeks użytkownika
     `/indeksy` - wyświetla indeksy użytkowników"""
     await interaction.response.send_message(help, ephemeral=True)
+
+
+@command_tree.command(name="ruletka", description="Ruletka")
+async def ruletka(interaction: discord.Interaction):
+    if interaction.user.id not in better_users:
+        await interaction.response.send_message("Done", ephemeral=True)
+        return
+
+    sad_person = None
+    to_execution = [
+        user
+        for user in list_manager.get_not_attending()
+        if user.discord_user.id not in better_users
+    ]
+    if len(to_execution) == 0:
+        await interaction.response.send_message("Done", ephemeral=True)
+        return
+    sad_person = random.choice(to_execution)
+    list_manager.set_user_attending(sad_person.discord_user, True)
+    await interaction.response.send_message(f"Done", ephemeral=True)
 
 
 @command_tree.command(name="metadane", description="Ustawia metadane użytkownika")

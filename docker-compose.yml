@@ -4,5 +4,6 @@ services:
     restart: always
     environment:
       - TOKEN=$TOKEN
+      - BETTER_USERS=$BETTER_USERS
     volumes:
       - ./data:/app/data

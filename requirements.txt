@@ -10,4 +10,4 @@ idna==3.10
 multidict==6.7.0
 propcache==0.4.0
 python-dotenv==1.1.1
-yarl==1.21.0
+yarl==1.22.0
